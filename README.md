@@ -1,8 +1,37 @@
-# Computer Graphics TP
+# 🖼️ Computer Graphics TP
 
-## Structure of the repo
-BVH_TP-master is the code provided by the professor
-TP folder contains 3 different file, one for each TP assigned
-run.sh is a bash script that takes as argument an integer representing the number of TP version you 
-want to run. Based on the input, it will copy the version of the file into the gpgpu_fullrt.comp and then
-will compile the code and run it
+## 📂 Repository Structure
+
+- **`BVH_TP-master/`** → base code provided by the professor.
+- **`TP/`** → contains 3 different versions of the file (`gpgpu_fullrt.comp`), one for each assigned TP.
+- **`run.sh`** → a Bash script that:
+  1. Takes an integer argument (1, 2, or 3) representing the TP version to run.
+  2. Copies the selected version into the main directory as `gpgpu_fullrt.comp`.
+  3. Builds the project.
+  4. Runs the executable.
+
+## ▶️ How to Run
+
+To run a specific TP version:
+
+```bash
+./run.sh <TP_number>
+# 🖼️ Computer Graphics TP
+
+## 📂 Repository Structure
+
+- **`BVH_TP-master/`** → base code provided by the professor.
+- **`TP/`** → contains 3 different versions of the file (`gpgpu_fullrt.comp`), one for each assigned TP.
+- **`run.sh`** → a Bash script that:
+  1. Takes an integer argument (1, 2, or 3) representing the TP version to run.
+  2. Copies the selected version into the main directory as `gpgpu_fullrt.comp`.
+  3. Builds the project.
+  4. Runs the executable.
+
+## ▶️ How to Run
+
+To run a specific TP version:
+
+```bash
+./run.sh <TP_number>
+
