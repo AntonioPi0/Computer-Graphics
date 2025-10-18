@@ -1,34 +1,27 @@
 #!/bin/bash
+set -euo pipefail
 
-# check for the file number in input
 if [ $# -ne 1 ]; then
+    echo "Usage: $0 <tp-number>" >&2
     exit 1
 fi
 
-EJ=$1
+TP_CHOICE=$1
+PROJECT_ROOT="TP3"
+VIEWER_DIR="$PROJECT_ROOT/viewer"
+SHADER_TARGET="$VIEWER_DIR/shaders/gpgpu_fullrt.comp"
 
-# definition of the 3 possible version of the file
-FILE_BASE="./tp"
-case $EJ in
-    1)
-        FILE="$FILE_BASE/tp1.comp"
-        ;;
-    2)
-        FILE="$FILE_BASE/tp2.comp"
-        ;;
-    3)
-        FILE="$FILE_BASE/tp3.comp"
-        ;;
-    *)
-        exit 1
-        ;;
+case "$TP_CHOICE" in
+    1) SHADER_SOURCE="tp/tp1.comp" ;;
+    2) SHADER_SOURCE="tp/tp2.comp" ;;
+    3) SHADER_SOURCE="tp/tp3.comp" ;;
+    *) echo "Unknown TP choice: $TP_CHOICE" >&2; exit 1 ;;
 esac
 
-# copy the file in the one used for the execution
-cp $FILE ./BVH_TP-master/viewer/shaders/gpgpu_fullrt.comp
+cp "$SHADER_SOURCE" "$SHADER_TARGET"
 
-# compile and execute
+pushd "$PROJECT_ROOT" >/dev/null
 qmake -qt5
 make
-./BVH_TP-master/viewer/myViewer
-
+./viewer/myViewer
+popd >/dev/null
