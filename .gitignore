@@ -20,3 +20,7 @@ myViewer
 # qmake-generated makefiles (keep authored ones under libsrc)
 **/Makefile
 !**/libsrc/Makefile
+
+# Platform metadata
+.DS_Store
+*:[Zz]one.Identifier
