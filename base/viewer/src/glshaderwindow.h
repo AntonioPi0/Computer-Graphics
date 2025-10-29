@@ -42,8 +42,8 @@ public slots:
     void setWindowSize(const QString& size);
     void cookTorranceClicked();
     void blinnPhongClicked();
-    void transparentClicked();
-    void opaqueClicked();
+    void randomSequenceClicked();
+    void haltonSequenceClicked();
     void updateLightIntensity(int lightSliderValue);
     void updateShininess(int shininessSliderValue);
     void updateEta(int etaSliderValue);
@@ -98,7 +98,7 @@ private:
     GLuint ssbo[5];
     // Parameters controlled by UI
     bool blinnPhong;
-    bool transparent;
+    bool useHaltonSequence;
     float eta;
     float lightIntensity;
     float shininess;

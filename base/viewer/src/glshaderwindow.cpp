@@ -29,7 +29,7 @@ glShaderWindow::glShaderWindow(QWindow *parent)
       g_vertices(0), g_normals(0), g_texcoords(0), g_colors(0), g_indices(0),
       gpgpu_vertices(0), gpgpu_normals(0), gpgpu_texcoords(0), gpgpu_colors(0), gpgpu_indices(0),
       environmentMap(0), texture(0), permTexture(0), pixels(0), mouseButton(Qt::NoButton), auxWidget(0),
-      isGPGPU(true), hasComputeShaders(true), blinnPhong(true), transparent(true), eta(1.5), lightIntensity(1.0f), shininess(50.0f), lightDistance(5.0f), groundDistance(0.78),
+      isGPGPU(true), hasComputeShaders(true), blinnPhong(true), useHaltonSequence(false), eta(1.5), lightIntensity(1.0f), shininess(50.0f), lightDistance(5.0f), groundDistance(0.78),
       shadowMap_fboId(0), shadowMap_rboId(0), shadowMap_textureId(0), fullScreenSnapshots(false), computeResult(0), 
       m_indexBuffer(QOpenGLBuffer::IndexBuffer), ground_indexBuffer(QOpenGLBuffer::IndexBuffer)
 {
@@ -181,15 +181,15 @@ void glShaderWindow::blinnPhongClicked()
     renderNow();
 }
 
-void glShaderWindow::transparentClicked()
+void glShaderWindow::randomSequenceClicked()
 {
-    transparent = true;
+    useHaltonSequence = false;
     renderNow();
 }
 
-void glShaderWindow::opaqueClicked()
+void glShaderWindow::haltonSequenceClicked()
 {
-    transparent = false;
+    useHaltonSequence = true;
     renderNow();
 }
 
@@ -234,16 +234,16 @@ QWidget *glShaderWindow::makeAuxWindow()
     groupBox->setLayout(vbox);
     buttons->addWidget(groupBox);
 
-    QGroupBox *groupBox2 = new QGroupBox("Surface:");
-    QRadioButton *transparent1 = new QRadioButton("&Transparent");
-    QRadioButton *transparent2 = new QRadioButton("&Opaque");
-    if (transparent) transparent1->setChecked(true);
-    else transparent2->setChecked(true);
-    connect(transparent1, SIGNAL(clicked()), this, SLOT(transparentClicked()));
-    connect(transparent2, SIGNAL(clicked()), this, SLOT(opaqueClicked()));
+    QGroupBox *groupBox2 = new QGroupBox("Sampling:");
+    QRadioButton *randomButton = new QRadioButton("&Random");
+    QRadioButton *haltonButton = new QRadioButton("&Halton");
+    if (useHaltonSequence) haltonButton->setChecked(true);
+    else randomButton->setChecked(true);
+    connect(randomButton, SIGNAL(clicked()), this, SLOT(randomSequenceClicked()));
+    connect(haltonButton, SIGNAL(clicked()), this, SLOT(haltonSequenceClicked()));
     QVBoxLayout *vbox2 = new QVBoxLayout;
-    vbox2->addWidget(transparent1);
-    vbox2->addWidget(transparent2);
+    vbox2->addWidget(randomButton);
+    vbox2->addWidget(haltonButton);
     groupBox2->setLayout(vbox2);
     buttons->addWidget(groupBox2);
     outer->addLayout(buttons);
@@ -1023,7 +1023,7 @@ void glShaderWindow::render()
         compute_program->setUniformValue("lightPosition", lightPosition);
         compute_program->setUniformValue("lightIntensity", 1.0f);
         compute_program->setUniformValue("blinnPhong", blinnPhong);
-        compute_program->setUniformValue("transparent", transparent);
+        compute_program->setUniformValue("useHaltonSequence", useHaltonSequence);
         compute_program->setUniformValue("lightIntensity", lightIntensity);
         compute_program->setUniformValue("shininess", shininess);
         compute_program->setUniformValue("eta", eta);
@@ -1087,7 +1087,6 @@ void glShaderWindow::render()
     m_program->setUniformValue("lightPosition", lightPosition);
     m_program->setUniformValue("lightIntensity", 1.0f);
     m_program->setUniformValue("blinnPhong", blinnPhong);
-    m_program->setUniformValue("transparent", transparent);
     m_program->setUniformValue("lightIntensity", lightIntensity);
     m_program->setUniformValue("shininess", shininess);
     m_program->setUniformValue("eta", eta);

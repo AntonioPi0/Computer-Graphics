@@ -42,13 +42,11 @@ public slots:
     void setWindowSize(const QString& size);
     void cookTorranceClicked();
     void blinnPhongClicked();
-    void transparentClicked();
-    void opaqueClicked();
+    void randomSequenceClicked();
+    void haltonSequenceClicked();
     void updateLightIntensity(int lightSliderValue);
     void updateShininess(int shininessSliderValue);
     void updateEta(int etaSliderValue);
-    void randomSequenceClicked();
-    void haltonSequenceClicked();
 
 protected:
     void mousePressEvent(QMouseEvent *e);
@@ -110,7 +108,6 @@ private:
     GLuint ssbo[5];
     // Parameters controlled by UI
     bool blinnPhong;
-    bool transparent;
     float eta;
     float lightIntensity;
     float shininess;

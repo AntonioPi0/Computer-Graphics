@@ -9,7 +9,6 @@ uniform mat4 persp_inverse;
 uniform float lightIntensity;
 uniform vec3 lightPosition;
 uniform bool blinnPhong;
-uniform bool transparent;
 uniform float shininess;
 uniform float eta;
 uniform float radius;
@@ -770,7 +769,6 @@ vec4 trace(vec4 origin, vec4 dir)
 {
     // These variables are for TP2
     trace_state_t stack[MAX_TRACE + 1];
-    bool fallback[MAX_TRACE + 1];
     int sp = 0;
 
 	// These are for TP1:
@@ -801,31 +799,6 @@ vec4 trace(vec4 origin, vec4 dir)
         }
 
         vec3 nextDir = normalize(reflect(incident, normal));
-        bool transmitted = false;
-
-        if (transparent) {
-            float eta_i = 1.0;
-            float eta_t = eta;
-            vec3 n = normal;
-            float cosi = clamp(dot(-n, incident), -1.0, 1.0);
-            if (cosi < 0.0) {
-                cosi = -cosi;
-                n = -n;
-                float tmp = eta_i;
-                eta_i = eta_t;
-                eta_t = tmp;
-            }
-            float etaRatio = eta_i / eta_t;
-            float sin2_t = etaRatio * etaRatio * (1.0 - cosi * cosi);
-            if (sin2_t <= 1.0) {
-                float cos_t = sqrt(max(0.0, 1.0 - sin2_t));
-                vec3 refracted = etaRatio * incident + (etaRatio * cosi - cos_t) * n;
-                nextDir = normalize(refracted);
-                transmitted = true;
-            }
-        }
-
-        fallback[sp] = transmitted;
         stack[sp] = state;
         ++sp;
 
@@ -850,8 +823,7 @@ vec4 trace(vec4 origin, vec4 dir)
             vec3 incoming = normalize(state.dir.xyz);
             float cosInc = clamp(dot(normal, -incoming), -1.0, 1.0);
             float F = fresnel(cosInc, eta);
-            float weight = fallback[i] ? (1.0 - F) : F;
-            result += weight * state.localColor.rgb * accumulated;
+            result += F * state.localColor.rgb * accumulated;
         }
 
         accumulated = result;
