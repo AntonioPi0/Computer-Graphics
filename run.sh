@@ -1,34 +1,45 @@
 #!/bin/bash
+set -euo pipefail
 
-# check for the file number in input
 if [ $# -ne 1 ]; then
+    echo "Usage: $0 <variant-number>" >&2
+    echo " 1 -> TP1 variant" >&2
+    echo " 2 -> TP2 variant" >&2
+    echo " 3 -> TP3 variant" >&2
     exit 1
 fi
 
-EJ=$1
-
-# definition of the 3 possible version of the file
-FILE_BASE="./tp"
-case $EJ in
-    1)
-        FILE="$FILE_BASE/tp1.comp"
-        ;;
-    2)
-        FILE="$FILE_BASE/tp2.comp"
-        ;;
-    3)
-        FILE="$FILE_BASE/tp3.comp"
+case "$1" in
+    1|2|3)
+        VARIANT_ID="tp$1"
         ;;
     *)
+        echo "Unknown variant: $1" >&2
         exit 1
         ;;
 esac
 
-# copy the file in the one used for the execution
-cp $FILE ./BVH_TP-master/viewer/shaders/gpgpu_fullrt.comp
+BASE_DIR="base"
+VARIANT_DIR="variants/${VARIANT_ID}"
+SHADER_SOURCE="tp/${VARIANT_ID}.comp"
+WORK_DIR=$(mktemp -d -t tp-build-XXXXXX)
+cleanup() {
+    rm -rf "$WORK_DIR"
+}
+trap cleanup EXIT
 
-# compile and execute
+rsync -a "$BASE_DIR/" "$WORK_DIR/"
+
+if [ -d "$VARIANT_DIR" ]; then
+    rsync -a "$VARIANT_DIR/" "$WORK_DIR/"
+fi
+
+if [ -f "$SHADER_SOURCE" ]; then
+    cp "$SHADER_SOURCE" "$WORK_DIR/viewer/shaders/gpgpu_fullrt.comp"
+fi
+
+pushd "$WORK_DIR" >/dev/null
 qmake -qt5
 make
-./BVH_TP-master/viewer/myViewer
-
+./viewer/myViewer
+popd >/dev/null
