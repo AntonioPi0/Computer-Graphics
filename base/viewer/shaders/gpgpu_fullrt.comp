@@ -8,7 +8,7 @@ uniform mat4 persp_inverse;
 uniform float lightIntensity;
 uniform vec3 lightPosition;
 uniform bool blinnPhong;
-uniform bool useHaltonSequence;
+uniform bool transparent;
 uniform float shininess;
 uniform float eta;
 uniform float radius;
