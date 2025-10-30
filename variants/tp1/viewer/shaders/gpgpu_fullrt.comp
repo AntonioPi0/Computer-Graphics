@@ -409,19 +409,21 @@ vec4 directIllumination(vec4 color, vec4 p, vec4 n, vec4 v)
         float cos_o = max(dot(N, V), 0.0);      // θ_o
         float cos_h = max(dot(N, H), 0.0);      // θ_h
 
-        float alpha = 0.2 * pow(0.005, shininess / 200);
+        float alpha = clamp(1.0 - shininess / 200.0, 0.05, 0.9);
 
         // GGX D and masking-shadowing G = G1(θi) G1(θo)
-        float D = ggx_D(cos_h,alpha);
-        float G = ggx_G1(cos_i,alpha) * ggx_G1(cos_o,alpha);
+        float D = ggx_D(cos_h, alpha);
+        float G = ggx_G1(cos_i, alpha) * ggx_G1(cos_o, alpha);
 
-        // Cook–Torrance specular:
-        // Cs = F(θd) D(θh) G1(θi) G1(θo) / (4 cosθi cosθo)
+        // Cook–Torrance specular term, following the lecture slides nomenclature.
         float nom = F * D * G;
-        float denom = max(4.0 * cos_i * cos_o, 1e-8);
+        float denom = max(4.0 * cos_i * cos_o, 1e-6);
 
-        float spec = nom / denom;
-        Cs = vec3(spec * lightIntensity);
+        vec3 F_tinted = mix(vec3(F), C, 0.1);
+        vec3 spec = (F_tinted * nom / denom) * lightIntensity;
+        vec3 kd = (vec3(1.0) - F_tinted);
+        Cd *= kd;
+        Cs = spec;
     }
 
     return vec4(Ca + Cd + Cs, 1.0);

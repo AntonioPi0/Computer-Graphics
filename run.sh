@@ -22,24 +22,25 @@ esac
 BASE_DIR="base"
 VARIANT_DIR="variants/${VARIANT_ID}"
 SHADER_SOURCE="tp/${VARIANT_ID}.comp"
-WORK_DIR=$(mktemp -d -t tp-build-XXXXXX)
-cleanup() {
-    rm -rf "$WORK_DIR"
-}
-trap cleanup EXIT
+BUILD_ROOT=".build"
+WORK_DIR="${BUILD_ROOT}/${VARIANT_ID}"
 
-rsync -a "$BASE_DIR/" "$WORK_DIR/"
+mkdir -p "$WORK_DIR"
+
+rsync -a --delete "$BASE_DIR/" "$WORK_DIR/"
 
 if [ -d "$VARIANT_DIR" ]; then
     rsync -a "$VARIANT_DIR/" "$WORK_DIR/"
 fi
 
-if [ -f "$SHADER_SOURCE" ]; then
+if [ -s "$SHADER_SOURCE" ]; then
     cp "$SHADER_SOURCE" "$WORK_DIR/viewer/shaders/gpgpu_fullrt.comp"
 fi
 
 pushd "$WORK_DIR" >/dev/null
-qmake -qt5
-make
+if [ ! -f Makefile ] || [ GPGPU_TP.pro -nt Makefile ] || [ viewer/viewer.pro -nt viewer/Makefile ]; then
+    qmake -qt5
+fi
+make -j"$(nproc --all 2>/dev/null || echo 1)"
 ./viewer/myViewer
 popd >/dev/null

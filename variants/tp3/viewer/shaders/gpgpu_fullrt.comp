@@ -696,7 +696,7 @@ vec4 directIllumination(vec4 color, vec4 p, vec4 n, vec4 v)
         return vec4(Ca, 1.0);
     }
 
-    // Hard shadow visibility test based on 4.Shadows.pdf
+    // Hard shadow visibility test based on the TP4 lecture slides on shadows
     float lightDistance = length(toLight);
     vec4 shadowOrigin = vec4(p.xyz + N * SHADOW_BIAS, 1.0);
     vec4 shadowDir = vec4(L, 0.0);
