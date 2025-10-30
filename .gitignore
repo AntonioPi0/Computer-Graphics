@@ -17,6 +17,7 @@ moc_*.o
 moc_predefs.h
 myViewer
 .build/
+build/
 
 # qmake-generated makefiles (keep authored ones under libsrc)
 **/Makefile

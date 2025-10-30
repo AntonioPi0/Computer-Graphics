@@ -31,7 +31,7 @@ glShaderWindow::glShaderWindow(QWindow *parent)
       g_vertices(0), g_normals(0), g_texcoords(0), g_colors(0), g_indices(0),
       gpgpu_vertices(0), gpgpu_normals(0), gpgpu_texcoords(0), gpgpu_colors(0), gpgpu_indices(0),
       environmentMap(0), texture(0), permTexture(0), pixels(0), mouseButton(Qt::NoButton), auxWidget(0),
-      isGPGPU(true), hasComputeShaders(true), samplingSequence(HaltonSampling), accumulationResetPending(true), frameIndex(0), accumulationTimerId(-1),
+      isGPGPU(true), hasComputeShaders(true), samplingSequence(RandomSampling), accumulationResetPending(true), frameIndex(0), accumulationTimerId(-1),
       blinnPhong(true), transparent(true), eta(1.5), lightIntensity(1.0f), shininess(50.0f), lightDistance(5.0f), groundDistance(0.78),
       shadowMap_fboId(0), shadowMap_rboId(0), shadowMap_textureId(0), fullScreenSnapshots(false), computeResult(0), momentsResult(0),
       m_indexBuffer(QOpenGLBuffer::IndexBuffer), ground_indexBuffer(QOpenGLBuffer::IndexBuffer)
@@ -197,7 +197,6 @@ void glShaderWindow::blinnPhongClicked()
 
 void glShaderWindow::transparentClicked()
 {
-    // In TP3 we reuse the legacy "transparent" toggle to enable Halton sampling.
     transparent = true;
     samplingSequence = HaltonSampling;
     markAccumulationDirty();
@@ -289,14 +288,13 @@ QWidget *glShaderWindow::makeAuxWindow()
     QRadioButton *transparent2 = new QRadioButton("&Opaque");
     if (transparent) transparent1->setChecked(true);
     else transparent2->setChecked(true);
-    // Reuse the legacy surface toggle to switch between Halton ("transparent") and random sampling.
     connect(transparent1, SIGNAL(clicked()), this, SLOT(transparentClicked()));
     connect(transparent2, SIGNAL(clicked()), this, SLOT(opaqueClicked()));
     QVBoxLayout *vbox2 = new QVBoxLayout;
     vbox2->addWidget(transparent1);
-    vbox2->addWidget(transparent2);
-    groupBox2->setLayout(vbox2);
-    buttons->addWidget(groupBox2);
+   vbox2->addWidget(transparent2);
+   groupBox2->setLayout(vbox2);
+   buttons->addWidget(groupBox2);
 
     outer->addLayout(buttons);
 
