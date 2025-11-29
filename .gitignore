@@ -1,0 +1,28 @@
+##############################
+# Build outputs & cache files
+##############################
+*.o
+*.a
+*.so
+*.dll
+*.exe
+*.out
+*.obj
+*.qmake.stash
+*.pro.user
+*.pro.user.*
+moc_*.cpp
+moc_*.h
+moc_*.o
+moc_predefs.h
+myViewer
+.build/
+build/
+
+# qmake-generated makefiles (keep authored ones under libsrc)
+**/Makefile
+!**/libsrc/Makefile
+
+# Platform metadata
+.DS_Store
+*:[Zz]one.Identifier

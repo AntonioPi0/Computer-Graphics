@@ -2,18 +2,18 @@
 
 ## 📂 Repository Structure
 
-- **`BVH_TP-master/`** → base code provided by the professor.
-- **`TP/`** → contains 3 different versions of the file (`gpgpu_fullrt.comp`), one for each assigned TP.
-- **`run.sh`** → a Bash script that:
-  1. Takes an integer argument (1, 2, or 3) representing the TP version to run.
-  2. Copies the selected version into the main directory as `gpgpu_fullrt.comp`.
-  3. Builds the project.
-  4. Runs the executable.
+- **`base/`** → canonical project tree shared by all TP variants (original professor starter).
+- **`variants/`** → sparse overlays with only the files that diverge per TP:
+  - `variants/tp1` – updated `viewer/shaders/gpgpu_fullrt.comp`
+  - `variants/tp2` – updated `viewer/shaders/gpgpu_fullrt.comp`
+  - `variants/tp3` – updated `gpgpu_fullrt.comp`, `viewer/src/glshaderwindow.{h,cpp}`, `viewer/src/main.cpp`
+- **`docs/`** → TP hand-outs (`TP1.pdf`, `TP2.pdf`, `TP3.pdf`, …).
+- **`tp/`** → the three compute-shader variants that the run script can inject for quick testing.
+- **`run.sh`** → helper that assembles a throwaway build directory, applies the selected overlay, swaps in the requested compute shader, then builds & launches the viewer.
 
 ## ▶️ How to Run
 
-To run a specific TP version:
+Pick the TP you want to try (1–3):
 
 ```bash
 ./run.sh <TP_number>
-
